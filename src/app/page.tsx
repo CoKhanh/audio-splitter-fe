@@ -7,9 +7,11 @@ import React, { useState, useRef } from "react";
 export default function Home() {
   const [file, setFile] = useState<File>()
   const [youtubeUrl, setYoutubeUrl] = useState("")
+  const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{ vocals: string; no_vocals: string } | null>(null)
   const [isPlayingAll, setIsPlayingAll] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
 
   const vocalsRef = useRef<HTMLAudioElement>(null)
   const noVocalsRef = useRef<HTMLAudioElement>(null)
@@ -59,6 +61,7 @@ export default function Home() {
 
     setLoading(true);
     setResult(null);
+    setEmailSent(false);
 
     try {
       const response = await fetch("http://localhost:8000/download-and-separate", {
@@ -66,7 +69,10 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ url: youtubeUrl }),
+        body: JSON.stringify({
+          url: youtubeUrl,
+          email: email || undefined  // Only send email if provided
+        }),
       });
 
       if (!response.ok) {
@@ -78,6 +84,7 @@ export default function Home() {
       if (data.success) {
         setResult(data.separated_audio);
         setYoutubeUrl("")
+        setEmailSent(data.email_sent || false);
       } else {
         throw new Error(data.error || "Unknown error");
       }
@@ -152,6 +159,15 @@ export default function Home() {
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value)}
             className="text-lg py-6"
+            disabled={loading}
+          />
+          <Input
+            type="email"
+            placeholder="Email (tùy chọn - để nhận kết quả qua email)"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="text-lg py-6"
+            disabled={loading}
           />
           <Button
             size={"lg"}
@@ -161,6 +177,13 @@ export default function Home() {
           >
             {loading ? "Đang xử lý..." : "Tải và Tách Âm Thanh"}
           </Button>
+          {emailSent && (
+            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 text-center">
+                ✓ Email đã được gửi thành công!
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
