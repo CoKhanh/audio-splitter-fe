@@ -37,7 +37,9 @@ export default function Home() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("http://localhost:8000/separate", {
+      // https://khanhdcfunnydev-ezbeatv0.hf.space/
+      // http://localhost:8000/
+      const response = await fetch("https://khanhdcfunnydev-ezbeatv0.hf.space/separate", {
         method: "POST",
         body: formData,
       });
@@ -64,7 +66,9 @@ export default function Home() {
     setEmailSent(false);
 
     try {
-      const response = await fetch("http://localhost:8000/download-and-separate", {
+      // https://khanhdcfunnydev-ezbeatv0.hf.space/
+      // http://localhost:8000/
+      const response = await fetch("https://khanhdcfunnydev-ezbeatv0.hf.space/download-and-separate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
